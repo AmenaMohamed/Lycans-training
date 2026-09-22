@@ -1,0 +1,287 @@
+% ============================================================
+% LYCANS TEAM — TRAINEE ASSIGNMENT TEMPLATE
+% ============================================================
+% !TeX program = lualatex
+
+\documentclass[11pt,a4paper]{article}
+
+% ------------------------------------------------------------
+% BASIC PACKAGES
+% ------------------------------------------------------------
+
+\usepackage{fontspec}
+\setmainfont{Arial}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% ------------------------------------------------------------
+% COLORS
+% ------------------------------------------------------------
+
+\definecolor{LycansBlue}{HTML}{002060}
+\definecolor{LycansLightBlue}{HTML}{203764}
+\definecolor{LycansRed}{HTML}{A20000}
+\definecolor{LinkBlue}{HTML}{0563C1}
+
+% ------------------------------------------------------------
+% HYPERLINKS
+% ------------------------------------------------------------
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=LycansBlue,
+    urlcolor=LinkBlue,
+    citecolor=LycansBlue
+}
+
+% ------------------------------------------------------------
+% PAGE STYLE
+% ------------------------------------------------------------
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\fancyhead[L]{
+    \raisebox{-0.15cm}{%
+        \includegraphics[height=0.8cm]{images/lycans-logo.png}%
+    }
+}
+
+\fancyhead[R]{
+    \textcolor{LycansBlue}{\textbf{Trainee Assignment}}
+}
+
+\fancyfoot[C]{
+    Page \thepage\ of \pageref{LastPage}
+}
+
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ------------------------------------------------------------
+% SECTION STYLE
+% ------------------------------------------------------------
+
+\usepackage{titlesec}
+
+\titleformat{\section}
+    {\Large\bfseries\color{LycansBlue}}
+    {\thesection}
+    {0.6em}
+    {}
+
+\titleformat{\subsection}
+    {\large\bfseries\color{LycansLightBlue}}
+    {\thesubsection}
+    {0.5em}
+    {}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries\color{LycansBlue}}
+    {\thesubsubsection}
+    {0.5em}
+    {}
+
+% ------------------------------------------------------------
+% CODE STYLE
+% ------------------------------------------------------------
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    columns=fullflexible
+}
+
+% ============================================================
+% DOCUMENT
+% ============================================================
+
+\begin{document}
+
+% ------------------------------------------------------------
+% TITLE
+% ------------------------------------------------------------
+
+\begin{center}
+    {\Large\bfseries\color{LycansBlue}
+    LYCANS AERODESIGN TEAM}
+
+    \vspace{0.4cm}
+
+    {\LARGE\bfseries
+    Trainee Assignment}
+
+    \vspace{0.4cm}
+
+    \begin{tabular}{rl}
+        \textbf{Name:} & Amena Mohamed \\
+        \textbf{Assignment:} & Avionics System Design \& Battery Calculations \\
+        \textbf{Date:} & August 22, 2026
+    \end{tabular}
+\end{center}
+
+\vspace{0.3cm}
+\hrule
+\vspace{0.4cm}
+
+% ------------------------------------------------------------
+% SECTION
+% ------------------------------------------------------------
+\section*{Avionics System Design}
+
+This documentation is on choosing the right components for a standard quadcopter UAV (Unmanned Aerial Vehicle) drone used for photography.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{images/Quadcopter.png}
+    \caption{\href{https://www.zenatech.com/7-essential-drone-parts-you-need-to-know/}{drone parts}}
+    \label{fig:aircraft}
+\end{figure}
+
+\begin{itemize}
+    \item \textbf{Flight controller (FC):} drone brain, has built-in gyroscope and accelerometer for stability, speed control.
+    \item \textbf{Receiver:} The receiver picks up control signals from your radio transmitter.
+    \item \textbf{ESC:} converts the FC's low-power signals into the high-current power that brushless motors need.
+    \item \textbf{GPS:} Important for automated navigation, like waypoint tracking and return-to-home.
+    \item \textbf{FPV camera:} feeds video to the VTX.
+    \item \textbf{VTX:} sends the live camera feed to your ground control station.
+    \item \textbf{Magnetometers:} assist with navigation by detecting the Earth’s magnetic field, improving directional accuracy.
+    \item \textbf{Barometers:} estimate altitude by detecting air pressure, enabling precise height control and smoother landings.
+\end{itemize}
+
+% ------------------------------------------------------------
+% SUBSECTION
+% ------------------------------------------------------------
+
+\subsection{Schematic}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{images/schematic.png}
+    \caption{\href{https://ardupilot.org/copter/docs/common-powering-the-pixhawk.html#common-powering-the-pixhawk-pixhawk-poweresc-wiring-overview}{Aircraft design block diagram}}
+    \label{fig:aircraft diagram}
+\end{figure}
+
+\textbf{\href{https://ardupilot.org/copter/docs/common-smartap-pdb.html}{SmartAP Power Distribution Board (PDB)}} is used to allow transferring the power from the battery to ESCs / Motors and generate power supply for the autopilot and other peripherals with different voltage levels. 
+
+% ------------------------------------------------------------
+\subsection{Sensors and Protocols}
+Here are all sensors usable with the flight controller connections and protocol mentioned:
+
+\textbf{Connections to Flight controller}
+\begin{itemize}
+    \item \textbf{Receiver RX (UART):} Connects to the FC serial port, ExpressLRS (ELRS) receiver, which uses UART protocol and is bi-directional \href{https://ardupilot.org/copter/docs/common-smartap-pdb.html}{Receivers}.
+    \item \textbf{GPS Module (UART):} Transmits position and navigation data to the FC via high-speed serial UART.
+    \item \textbf{Magnetometer / Compass (I2C):} Measures heading orientation using a 2-wire I2C bus suitable for low-data-rate sensors.
+    \item \textbf{Barometer (SPI / I2C):} Measures atmospheric pressure for altitude estimation; interfaced internally via fast SPI or I2C.
+    \item \textbf{Telemetry Radio (UART):} Provides a two-way serial link via UART for real-time flight data and GCS communication.
+    \item \textbf{SBC Companion Computer (UART):} Communicates high-level mission commands and video data with the FC using the MAVLink protocol.
+    \item \textbf{ESC / Motors (PWM / DShot):} Transmits motor speed commands directly from the FC output channels.
+\end{itemize}
+
+% ------------------------------------------------------------
+
+\subsection{Component Selection}
+
+% Increases row height/spacing for the table
+\renewcommand{\arraystretch}{1.4}
+
+\begin{table}[H]
+    \centering
+    \footnotesize
+    \caption{Component Selection Details}
+    \label{tab:parameters}
+    \begin{tabular}{|p{2.5cm}|p{2cm}|p{3.5cm}|p{2cm}|p{1.8cm}|p{1.2cm}|}
+        \hline
+        \textbf{Component} & \textbf{Type} & \textbf{Reason of Choice} & \textbf{Amp Rating} & \textbf{Price} & \textbf{Weight} \\ \hline
+        Battery & Li-ion 4S2P (Molicel P42A) & Higher energy density for longer endurance & 4200 mAh (45A cont.) & 1,600 EGP & 580 g \\ \hline
+        Flight Controller & Pixhawk 4 & Native ArduPilot support & 800 mA & 2,400 EGP & 49 g \\ \hline
+        SBC & Raspberry Pi & High-level control & 1200 mA & 3,100 EGP & 10 g \\ \hline
+        GPS & Holybro M9N & Built-in compass & 200 mA & 2,700 EGP & 36.8 g \\ \hline
+        Receiver & ExpressLRS & Low latency and long range & 1000 mA & 991 EGP & 0.4 g \\ \hline
+        Telemetry & SiK Telemetry & Real-time GCS link & 100 mA & 1,800 EGP & 11.5 g \\ \hline
+        Fuse & Maxi Blade Fuse (Fast-Blow) & Protects avionics and battery from short circuits & 40 A rating & 50 EGP & 3 g \\ \hline
+        Fuse holder & Inline Waterproof & Heavy-duty AWG12 leads for secure mounting & Up to 60 A & 75 EGP & 12 g \\ \hline
+    \end{tabular}
+\end{table}
+
+% Resets row height back to normal for subsequent elements
+\renewcommand{\arraystretch}{1.0}
+
+\textbf{NOTE:} The firmware that runs on the Flight controller (FC) is according to the FC type Ex: \textbf{Betaflight}, for any microcontroller, while \textbf{INAV} and \textbf{ArduPilot}, for certain microcontroller families.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.38\textwidth]{images/Velox-V2207.png}
+    \caption{\href{https://www.racedayquads.com/pages/rapid-search-results?q=T-Motor+Velox+motor&aff=4}{Velox-V2207 motor}}
+    \label{fig:motor}
+\end{figure}
+
+\begin{itemize}
+    \item \href{https://oscarliang.com/flight-controller/#How-to-Choose}{how to choose suitable FC ?}
+    \item \href{https://oscarliang.com/expresslrs-receivers/}{How to Choose ExpressLRS Receiver?}
+\end{itemize}
+
+% ------------------------------------------------------------
+% SECTION (FORCED TO NEW PAGE)
+% ------------------------------------------------------------
+\clearpage
+
+\section{Battery Calculations and Flight Time}
+
+\subsection{Current Consumption Breakdown}
+By referring to Table~\ref{tab:parameters}, the overall current drawn from the system components is:
+\begin{itemize}
+    \item FC = $800\,\text{mA} = 0.8\,\text{A}$
+    \item Raspberry Pi = $1200\,\text{mA} = 1.2\,\text{A}$
+    \item GPS = $200\,\text{mA} = 0.2\,\text{A}$
+    \item Receiver = $1000\,\text{mA} = 1.0\,\text{A}$
+    \item Telemetry = $100\,\text{mA} = 0.1\,\text{A}$
+
+    \item Avionics (FC + Raspberry Pi + GPS + Receiver + Telemetry) = $0.8 + 1.2 + 0.2 + 1.0 + 0.1 = 3.3\,\text{A}$
+    \item 4 $\times$ Velox Motors (Cruise/Hover draw) = $4 \times 3.0\,\text{A} = 12.0\,\text{A}$
+    \item \textbf{Total Cruise Current Draw ($I_{\text{total}}$):} $3.3\,\text{A} + 12.0\,\text{A} = 15.3\,\text{A}$
+\end{itemize}
+
+\subsection{Battery Sizing and Flight Time Estimation}
+Selected Battery: \textbf{Li-ion 4S2P (4200 mAh, 14.8 V, 45 A Continuous Output)}
+
+\begin{itemize}
+    \item \textbf{Flight Time ($T_{\text{flight}}$):}
+    \begin{equation}
+        T_{\text{flight}} = \frac{\text{Battery Capacity (Ah)}}{I_{\text{total}}} \times 60 = \frac{4.2\,\text{Ah}}{15.3\,\text{A}} \times 60 \approx 16.4\,\text{minutes}
+    \end{equation}
+    
+    \item \textbf{Discharge Safety Check:}
+    The battery continuous discharge capability is $45\,\text{A}$, which easily covers the continuous cruise requirement ($15.3\,\text{A}$).
+\end{itemize}
+
+\subsection{Fuse Selection}
+A \textbf{40 A Blade Fuse} was chosen to protect the system against short circuits, while safely handling the normal $15.3\,\text{A}$ cruise current.
+```[cite: 1]
+\section{Resources}
+\begin{itemize}
+    \item \href{https://www.unmannedtechshop.co.uk/blogs/knowledge-base/essential-fpv-drone-parts-what-every-pilot-needs-to-know#:~:text=An%20FPV%20drone,battery%2C%20and%20antenna.}{Overview on drone components choice}
+    \item \href{https://oscarliang.com/quadcopter-hardware-overview/}{Overview on Quadcopter hardware components}
+    \item \href{https://ardupilot.org/copter/docs/common-powering-the-pixhawk.html}{ArduPilot Pixhawk Power Wiring Overview}
+    \item \href{https://oscarliang.com/how-to-choose-battery-for-quadcopter-multicopter/}{calculations& Battery Selection}
+\end{itemize}
+
+% ============================================================
+% END
+% ============================================================
+\end{document}
